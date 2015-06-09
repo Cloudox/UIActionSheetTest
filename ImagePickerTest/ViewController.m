@@ -75,6 +75,9 @@
 }
 
 //已经显示ActionSheet是调用
+-(void)didPresentActionSheet:(UIActionSheet *)actionSheet {
+    
+}
 
 //ActionSheet已经消失时调用
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
