@@ -17,6 +17,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    NSString *imagePath = [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"image.png"];
+    UIImage *image = [[UIImage alloc] initWithContentsOfFile:imagePath];
+    if (image) {
+        self.imageView.image = image;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -41,12 +46,12 @@
 //    actionSheet.title = @"选择照片";
     
     //获取按钮总数
-    NSString *num = [NSString stringWithFormat:@"%ld", actionSheet.numberOfButtons];
-    NSLog(@"%@", num);
+//    NSString *num = [NSString stringWithFormat:@"%ld", actionSheet.numberOfButtons];
+//    NSLog(@"%@", num);
     
     //获取某个索引按钮的标题
-    NSString *btnTitle = [actionSheet buttonTitleAtIndex:1];
-    NSLog(@"%@", btnTitle);
+//    NSString *btnTitle = [actionSheet buttonTitleAtIndex:1];
+//    NSLog(@"%@", btnTitle);
     
     [actionSheet showInView:self.view];
     
@@ -56,11 +61,16 @@
 #pragma mark - UIActionSheetDelegate
 //根据被点击的按钮做出反应，0对应destructiveButton，之后的button依次排序
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
+    if (buttonIndex == 0) {
         NSLog(@"拍照");
     }
-    else if (buttonIndex == 2) {
+    else if (buttonIndex == 1) {
         NSLog(@"相册");
+        UIImagePickerController *imageController = [[UIImagePickerController alloc] init];
+        [imageController setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];// 设置为相册类型
+        [imageController setDelegate:self];
+        [imageController setAllowsEditing:YES];
+        [self presentViewController:imageController animated:YES completion:nil];
     }
 }
 
@@ -87,6 +97,23 @@
 //ActionSheet即将消失时调用
 - (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
     
+}
+
+#pragma mark UIImagePickerControllerDelegate
+// 当获取到照片或视频后调用
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    NSLog(@"获取成功");
+    NSLog(@"内容信息：%@", info);
+    UIImage *pickedImage = nil;
+    if ([picker allowsEditing]) {
+        pickedImage = [info objectForKey:UIImagePickerControllerEditedImage];
+    } else {
+        pickedImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    }
+    NSString *imagePath = [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:@"image.png"];
+    [UIImagePNGRepresentation(pickedImage) writeToFile:imagePath atomically:YES];
+    self.imageView.image = pickedImage;
+    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

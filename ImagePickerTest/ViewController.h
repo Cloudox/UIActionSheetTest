@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController <UIActionSheetDelegate>
+@interface ViewController : UIViewController <UIActionSheetDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@property (strong, nonatomic) IBOutlet UIImageView *imageView;
 
 - (IBAction)changeAvata:(id)sender;
 
